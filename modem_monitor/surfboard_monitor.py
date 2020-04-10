@@ -10,6 +10,7 @@
 import argparse
 from lxml import html
 import requests
+import sys
 
 parser = argparse.ArgumentParser(description='Polls a Surfboard cable modem for \
     status information suitable for ingestion by a Nagios compatible monitoring system.')
@@ -23,6 +24,10 @@ group.add_argument('-c', '--crit', action='store', dest='crit', default='90',
 
 options = parser.parse_args()
 
+state_ok = 0
+state_warning = 1
+state_critical = 2
+state_unknown = 3
 
 url = 'http://' + options.addr + '/indexData.htm'
 page = requests.get(url)
@@ -31,4 +36,13 @@ elements = tree.xpath('//tr/td//text()')
 allStatuses = {elements[i]: elements[i + 1] for i in range(0, len(elements), 2)} 
 oprStatus = allStatuses['Cable Modem Status']
 
-print(oprStatus)
+if oprStatus == "Offline":
+    print("CRITICAL : Status", oprStatus)
+    retval = state_critical
+elif oprStatus == "Operational":
+    print("OK : Status", oprStatus)
+    retval = state_ok
+else:
+    retval = state_unknown
+
+sys.exit(retval)
