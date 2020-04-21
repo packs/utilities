@@ -7,8 +7,9 @@
 #
 #     Copyright (c) 2020 Scott Pack. All rights reserved.
 #
-import argparse
+from __future__ import print_function
 from lxml import html
+import argparse
 import requests
 import sys
 
