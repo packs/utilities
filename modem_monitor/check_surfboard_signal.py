@@ -12,7 +12,6 @@ from lxml import html
 import requests
 import sys
 import re
-import pprint
 
 parser = argparse.ArgumentParser(description='Polls a Surfboard cable modem for \
     status information suitable for ingestion by a Nagios compatible monitoring system.')
