@@ -20,7 +20,7 @@ group = parser.add_argument_group()
 group.add_argument('-f', '--function', action='store', dest='func',
                    type=str, help='Moden statistic on which to report',
                    choices=['snr', 'power'], required=True)
-group.add_argument('-a', '--address', '--host', action='store', dest='addr',
+group.add_argument('-a', '--address', '--host', '-H', action='store', dest='addr',
                    type=str, help='Host name or IP address to query')
 group.add_argument('-w', '--warn', action='store', dest='warn', default='75',
                    type=int, help='Warning threshold (default: 75)')

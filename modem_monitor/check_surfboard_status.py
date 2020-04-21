@@ -16,7 +16,7 @@ import sys
 parser = argparse.ArgumentParser(description='Polls a Surfboard cable modem for \
     status information suitable for ingestion by a Nagios compatible monitoring system.')
 group = parser.add_mutually_exclusive_group()
-group.add_argument('-a', '--address', '--host', action='store', dest='addr',
+group.add_argument('-a', '--address', '--host', '-H', action='store', dest='addr',
                    help='Host name or IP address to query')
 group.add_argument('-w', '--warn', action='store', dest='warn', default='75',
                    help='Warning threshold (default: 75)')
