@@ -16,7 +16,10 @@ import pprint
 
 parser = argparse.ArgumentParser(description='Polls a Surfboard cable modem for \
     status information suitable for ingestion by a Nagios compatible monitoring system.')
-group = parser.add_mutually_exclusive_group()
+group = parser.add_argument_group()
+group.add_argument('-f', '--function', action='store', dest='func',
+                   type=str, help='Moden statistic on which to report',
+                   choices=['snr', 'power'], required=True)
 group.add_argument('-a', '--address', '--host', action='store', dest='addr',
                    type=str, help='Host name or IP address to query')
 group.add_argument('-w', '--warn', action='store', dest='warn', default='75',
@@ -61,15 +64,43 @@ for i in range(1, numChan+1):
         tmpDict[downstream[j]] = downstream[j+i]
     downStats[downstream[i]] = tmpDict
 
-pprint.pprint(downStats)
 
-# if oprStatus == "Offline":
-#     print("CRITICAL : Status", oprStatus)
-#     retval = state_critical
-# elif oprStatus == "Operational":
-#     print("OK : Status", oprStatus)
-#     retval = state_ok
-# else:
-#     retval = state_unknown
+# from https://arris.secure.force.com/consumers/articles/General_FAQs/SB6183-Cable-Signal-Levels
+# Power levels are within the acceptable range of - 15 dBmV to + 15 dBmV for each downstream channel.
+# If QAM64, SNR should be 23.5 dB or greater.
+# If QAM256 and DPL( -6 dBmV to +15 dBmV) SNR should be 30 dB or greater.
+# If QAM256 and DPL(-15 dBmV to -6 dBmV) SNR should be 33 dB or greater.
 
-# sys.exit(retval)
+retval = state_ok
+if( options.func == 'snr'):
+    for chan in downStats:
+        power = downStats[chan]['Power Level'].split()
+        snr = downStats[chan]['Signal to Noise Ratio'].split()
+
+        if( ( -6 <= int(power[0]) <= 15 ) and ( int(snr[0]) <= 35 ) and ( retval != state_critical ) ):
+            retval = state_warning
+        elif( (-6 <= int(power[0]) <= 15 ) and ( int(snr[0]) < 30 ) ):
+            retval = state_critical
+        elif( ( -15 <= int(power[0]) <= -6 ) and ( int(snr[0]) <= 38 ) and ( retval != state_critical ) ):
+            retval = state_warning
+        elif( (-6 <= int(power[0]) <= 15 ) and ( int(snr[0]) < 33 ) ):
+            retval = state_critical
+    if retval == state_ok:
+        outMessage = "OK : Signal to Noise Ratios : "
+        for chan in downStats:
+            outMessage = outMessage + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
+    elif retval == state_warning:
+        outMessage = "WARNING : Signal to Noise Ratios : "
+        for chan in downStats:
+            outMessage = outMessage + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
+    elif retval == state_critical:
+        outMessage = "CRITICAL : Signal to Noise Ratios : "
+        for chan in downStats:
+            outMessage = outMessage + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
+    elif retval == state_unknown:
+        outMessage = "UNKNOWN : Signal to Noise Ratios : "
+        for chan in downStats:
+            outMessage = outMessage + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
+
+print (outMessage)
+sys.exit(retval)
