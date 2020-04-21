@@ -101,6 +101,31 @@ if( options.func == 'snr'):
         outMessage = "UNKNOWN : Signal to Noise Ratios : "
         for chan in downStats:
             outMessage = outMessage + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
+elif( options.func == 'power'):
+    for chan in downStats:
+        power = downStats[chan]['Power Level'].split()
+        if( (abs(int(power[0])) <= 11 ) and retval != state_critical ):
+            retval = state_warning
+        elif( abs(int(power[0]) > 15)):
+            retval = state_critical
+        else:
+            retval = state_unknown
+    if retval == state_ok:
+        outMessage = "OK : Power Levels : "
+        for chan in downStats:
+            outMessage = outMessage + chan + " - " + downStats[chan]['Power Level'] + " ; "
+    elif retval == state_warning:
+        outMessage = "WARNING : Power Levels : "
+        for chan in downStats:
+            outMessage = outMessage + chan + " - " + downStats[chan]['Power Level'] + " ; "
+    elif retval == state_critical:
+        outMessage = "CRITICAL : Power Levels : "
+        for chan in downStats:
+            outMessage = outMessage + chan + " - " + downStats[chan]['Power Level'] + " ; "
+    elif retval == state_unknown:
+        outMessage = "UNKNOWN : Power Levels : "
+        for chan in downStats:
+            outMessage = outMessage + chan + " - " + downStats[chan]['Power Level'] + " ; "
 
 print (outMessage)
 sys.exit(retval)
