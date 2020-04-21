@@ -87,20 +87,14 @@ if( options.func == 'snr'):
             retval = state_critical
     if retval == state_ok:
         outMessage = "OK : Signal to Noise Ratios : "
-        for chan in downStats:
-            outMessage = outMessage + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
     elif retval == state_warning:
         outMessage = "WARNING : Signal to Noise Ratios : "
-        for chan in downStats:
-            outMessage = outMessage + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
     elif retval == state_critical:
         outMessage = "CRITICAL : Signal to Noise Ratios : "
-        for chan in downStats:
-            outMessage = outMessage + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
     elif retval == state_unknown:
         outMessage = "UNKNOWN : Signal to Noise Ratios : "
-        for chan in downStats:
-            outMessage = outMessage + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
+    for chan in downStats:
+        outMessage = outMessage + "Channel " + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
 elif( options.func == 'power'):
     for chan in downStats:
         power = downStats[chan]['Power Level'].split()
@@ -112,20 +106,14 @@ elif( options.func == 'power'):
             retval = state_unknown
     if retval == state_ok:
         outMessage = "OK : Power Levels : "
-        for chan in downStats:
-            outMessage = outMessage + chan + " - " + downStats[chan]['Power Level'] + " ; "
     elif retval == state_warning:
         outMessage = "WARNING : Power Levels : "
-        for chan in downStats:
-            outMessage = outMessage + chan + " - " + downStats[chan]['Power Level'] + " ; "
     elif retval == state_critical:
         outMessage = "CRITICAL : Power Levels : "
-        for chan in downStats:
-            outMessage = outMessage + chan + " - " + downStats[chan]['Power Level'] + " ; "
     elif retval == state_unknown:
         outMessage = "UNKNOWN : Power Levels : "
-        for chan in downStats:
-            outMessage = outMessage + chan + " - " + downStats[chan]['Power Level'] + " ; "
+    for chan in downStats:
+        outMessage = outMessage + "Channel " + chan + " - " + downStats[chan]['Power Level'] + " ; "
 
 print (outMessage)
 sys.exit(retval)
