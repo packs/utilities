@@ -83,7 +83,7 @@ if( options.func == 'snr'):
             retval = state_critical
         elif( ( -15 <= int(power[0]) <= -6 ) and ( int(snr[0]) <= 38 ) and ( retval != state_critical ) ):
             retval = state_warning
-        elif( (-6 <= int(power[0]) <= 15 ) and ( int(snr[0]) < 33 ) ):
+        elif( (-15 <= int(power[0]) <= -6 ) and ( int(snr[0]) < 33 ) ):
             retval = state_critical
     if retval == state_ok:
         outMessage = "OK : Signal to Noise Ratios : "
@@ -98,9 +98,11 @@ if( options.func == 'snr'):
 elif( options.func == 'power'):
     for chan in downStats:
         power = downStats[chan]['Power Level'].split()
-        if( (abs(int(power[0])) <= 11 ) and retval != state_critical ):
+        if( abs(int(power[0])) < 11 and retval == state_ok ):
+            retval = state_ok
+        elif( (11 <= abs(int(power[0])) <= 15 ) and retval != state_critical ):
             retval = state_warning
-        elif( abs(int(power[0]) > 15)):
+        elif( abs(int(power[0]) > 15) ):
             retval = state_critical
         else:
             retval = state_unknown
