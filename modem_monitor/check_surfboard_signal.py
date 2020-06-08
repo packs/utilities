@@ -74,17 +74,21 @@ for i in range(1, numChan+1):
 retval = state_ok
 if( options.func == 'snr'):
     for chan in downStats:
-        power = downStats[chan]['Power Level'].split()
-        snr = downStats[chan]['Signal to Noise Ratio'].split()
+        try:
+            power = downStats[chan]['Power Level'].split()
+            snr = downStats[chan]['Signal to Noise Ratio'].split()
 
-        if( ( -6 <= int(power[0]) <= 15 ) and ( int(snr[0]) <= 35 ) and ( retval != state_critical ) ):
-            retval = state_warning
-        elif( (-6 <= int(power[0]) <= 15 ) and ( int(snr[0]) < 30 ) ):
-            retval = state_critical
-        elif( ( -15 <= int(power[0]) <= -6 ) and ( int(snr[0]) <= 38 ) and ( retval != state_critical ) ):
-            retval = state_warning
-        elif( (-15 <= int(power[0]) <= -6 ) and ( int(snr[0]) < 33 ) ):
-            retval = state_critical
+            if( ( -6 <= int(power[0]) <= 15 ) and ( int(snr[0]) <= 35 ) and ( retval != state_critical ) ):
+                retval = state_warning
+            elif( (-6 <= int(power[0]) <= 15 ) and ( int(snr[0]) < 30 ) ):
+                retval = state_critical
+            elif( ( -15 <= int(power[0]) <= -6 ) and ( int(snr[0]) <= 38 ) and ( retval != state_critical ) ):
+                retval = state_warning
+            elif( (-15 <= int(power[0]) <= -6 ) and ( int(snr[0]) < 33 ) ):
+                retval = state_critical
+        except:
+            downStats[chan]['Signal to Noise Ratio'] = '0'
+            retval = state_critical                 
     if retval == state_ok:
         outMessage = "OK : Signal to Noise Ratios : "
     elif retval == state_warning:
@@ -97,15 +101,19 @@ if( options.func == 'snr'):
         outMessage = outMessage + "Channel " + chan + " - " + downStats[chan]['Signal to Noise Ratio'] + " ; "
 elif( options.func == 'power'):
     for chan in downStats:
-        power = downStats[chan]['Power Level'].split()
-        if( abs(int(power[0])) < 11 and retval == state_ok ):
-            retval = state_ok
-        elif( (11 <= abs(int(power[0])) <= 15 ) and retval != state_critical ):
-            retval = state_warning
-        elif( abs(int(power[0]) > 15) ):
-            retval = state_critical
-        else:
-            retval = state_unknown
+        try:
+            power = downStats[chan]['Power Level'].split()
+            if( abs(int(power[0])) < 11 and retval == state_ok ):
+                retval = state_ok
+            elif( (11 <= abs(int(power[0])) <= 15 ) and retval != state_critical ):
+                retval = state_warning
+            elif( abs(int(power[0]) > 15) ):
+                retval = state_critical
+            else:
+                retval = state_unknown
+        except:
+            downStats[chan]['Power Level'] = '0'
+            retval = state_critical  
     if retval == state_ok:
         outMessage = "OK : Power Levels : "
     elif retval == state_warning:
